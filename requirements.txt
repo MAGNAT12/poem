@@ -1,0 +1,6 @@
+Package  Version
+-------- -------
+asgiref  3.9.0
+Django   4.2.8
+pip      24.0
+sqlparse 0.5.3

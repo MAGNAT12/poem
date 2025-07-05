@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Стихи</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem 1rem;
+      background-color: #0e0e0e;
+      font-family: 'Georgia', serif;
+      color: #eee;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .poem {
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 15px rgba(0,0,0,0.4);
+      border-left: 5px solid #f55;
+      transition: transform 0.2s ease;
+    }
+
+    .poem:hover {
+      transform: scale(1.01);
+    }
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #f55;
+      margin-bottom: 1rem;
+    }
+
+    .content {
+      white-space: pre-wrap;
+      line-height: 1.7;
+      font-size: 1.1rem;
+    }
+
+    .author {
+      text-align: right;
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      color: #999;
+      font-style: italic;
+    }
+
+    .buttons {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      font-size: 1rem;
+    }
+
+    .buttons a {
+      background-color: #2a2a2a;
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #ccc;
+      transition: background 0.2s;
+    }
+
+    .buttons a:hover {
+      background-color: #3c3c3c;
+    }
+
+    .buttons .like::before {
+      content: "👍 ";
+    }
+
+    .buttons .dislike::before {
+      content: "👎 ";
+    }
+
+    @media (max-width: 600px) {
+      .title {
+        font-size: 1.5rem;
+      }
+
+      .content {
+        font-size: 1rem;
+      }
+
+      .buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #333;
+      color: #eee;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    .notification.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  {% load custom_filters %}
+  {% load static %}
+  {% if messages %}
+    <div id="notification" class="notification"></div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const notification = document.getElementById("notification");
+        {% for message in messages %}
+          notification.textContent = "{{ message|escapejs }}";
+          notification.classList.add("show");
+          setTimeout(() => notification.classList.remove("show"), 3000);
+        {% endfor %}
+      });
+    </script>
+  {% endif %}
+
+  <div class="container">
+    {% for poem in poems %}
+      <div class="poem">
+        <div class="title">{{ poem.title }}</div>
+        <div class="content">{{ poem.content|linebreaksbr }}</div>
+        {% if poem.author %}
+          <div class="author">— {{ poem.author }}</div>
+        {% endif %}
+        <div class="buttons">
+          {% with vote=request.session|get_item:"voted_poem_"|add:poem.id|stringformat:"s" %}
+            {% if vote == "like" %}
+              👍 Лайк ({{ poem.likes }}) — вы уже голосовали
+            {% else %}
+              <a href="{% url 'like_poem' poem.id %}" class="like">Лайк ({{ poem.likes }})</a>
+            {% endif %}
+
+            {% if vote == "dislike" %}
+              👎 Дизлайк ({{ poem.dislikes }}) — вы уже голосовали
+            {% else %}
+              <a href="{% url 'dislike_poem' poem.id %}" class="dislike">Дизлайк ({{ poem.dislikes }})</a>
+            {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+    {% empty %}
+      <p style="text-align: center;">Пока нет стихов.</p>
+    {% endfor %}
+  </div>
+</body>
+</html>

@@ -9,13 +9,13 @@ git clone https://github.com/MAGNAT12/poem.git
 cd poem
 ```
 
-## Если Linux
+## Установка зависимостей Linux
 
 ```bash
 pip3 install -r requirements.txt
 ```
 
-## Если Windows
+## Установка зависимостейWindows
 
 ```bash
 pip3 install -r requirements.txt

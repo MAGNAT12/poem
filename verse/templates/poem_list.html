@@ -142,18 +142,20 @@
         {% if poem.author %}
           <div class="author">— {{ poem.author }}</div>
         {% endif %}
+        {% if poem.created_at %}
+          <div class="created_at">{{ poem.created_at }}</div>
+        {% endif %}
         <div class="buttons">
           {% with vote=request.session|get_item:"voted_poem_"|add:poem.id|stringformat:"s" %}
             {% if vote == "like" %}
               👍 Лайк ({{ poem.likes }}) — вы уже голосовали
             {% else %}
-              <a href="{% url 'like_poem' poem.id %}" class="like">Лайк ({{ poem.likes }})</a>
+              <a href="{% url 'like_poem' poem.id %}#poem-{{ poem.id }}" class="like">Лайк ({{ poem.likes }})</a>
             {% endif %}
-
             {% if vote == "dislike" %}
               👎 Дизлайк ({{ poem.dislikes }}) — вы уже голосовали
             {% else %}
-              <a href="{% url 'dislike_poem' poem.id %}" class="dislike">Дизлайк ({{ poem.dislikes }})</a>
+              <a href="{% url 'dislike_poem' poem.id %}#poem-{{ poem.id }}" class="dislike">Дизлайк ({{ poem.likes }})</a>
             {% endif %}
           {% endwith %}
         </div>

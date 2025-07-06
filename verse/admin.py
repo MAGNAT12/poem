@@ -4,5 +4,5 @@ from .models import *
 
 @admin.register(ListPoem)
 class ListPoemAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'created_at')
+    list_display = ('title', 'author', 'created_at', 'likes', 'dislikes')
     search_fields = ('title', 'content', 'author')
